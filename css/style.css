@@ -1,0 +1,14 @@
+/* General styles */
+
+body {
+    font-family: "Raleway", sans-serif;
+    font-weight: 600;
+    background-color: #eaeaea;
+    font-size: 14px;
+}
+
+.wrapper {
+    /* max-width: 1200px; */
+    /* margin: 10px auto; */
+    padding: 100px 25px;
+}

@@ -1,0 +1,207 @@
+/* CSS customization */
+
+:root {
+    --color-primary: #0167b3; /* Link (switchers), tooltips text */
+    --color-secondary: #5cadea; /* Progress, slider thumb */
+    --color-tooltip-bg: #ffffff; /* Tooltip bg */
+    --color-ruler1: #999999; /* Rules text 1 */
+    --color-ruler2: #333333; /* Rules text 2 */
+    --color-slider-bg: #edf1f8; /* Slider bg */
+}
+
+/* rangeSlider styles */
+
+.rangeSlider-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.rangeSlider-content {
+    flex: 0 1 80%;
+}
+
+/* RangeSlider switcher */
+
+.rangeSldier-link {
+    display: block;
+    color: var(--color-primary);
+    margin: 10px 0px;
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .rangeSldier-link {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .rangeSldier-link {
+        font-size: 10px;
+    }
+}
+
+.rangeSldier-link.active,
+.rangeSldier-link:hover {
+    opacity: 1;
+}
+
+/* RangeSlider progress and inputs */
+
+.rangeSlider-slider {
+    height: 10px;
+    border-radius: 5px;
+    background-color: var(--color-slider-bg);
+    position: relative;
+}
+
+.rangeSlider-progress {
+    position: absolute;
+    top: 2px;
+    left: 25%;
+    right: 25%;
+    height: 6px;
+    background-color: var(--color-secondary);
+    border-radius: 5px;
+}
+
+.rangeSlider-inputs {
+    position: relative;
+}
+
+.rangeSlider-input-min,
+.rangeSlider-input-max {
+    position: absolute;
+    height: 6px;
+    width: 100%;
+    top: -8px;
+    -webkit-appearance: none;
+    background: none;
+    pointer-events: none;
+}
+
+.rangeSlider-input-min::-webkit-slider-thumb,
+.rangeSlider-input-max::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: auto;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 5px solid var(--color-secondary);
+    border-radius: 50%;
+    box-shadow: 0px 3px 5px rgba(31, 85, 132, 0.2);
+}
+
+/* RangeSlider rule */
+
+.rangeSlider-years-list {
+    position: absolute;
+    width: 100%;
+    padding: 13px 0px;
+    color: var(--color-ruler1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rangeSlider-years-item {
+}
+
+.rangeSlider-years-item-black {
+    color: var(--color-ruler2);
+}
+
+@media (max-width: 768px) {
+    .rangeSlider-years-list {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .rangeSlider-years-list {
+        font-size: 10px;
+    }
+}
+
+/* RangeSlider ToolTip */
+
+.rangeSlider-tooltip {
+    position: absolute;
+    z-index: 999;
+    font-size: 18px;
+    line-height: 24px;
+    text-align: center;
+    color: var(--color-primary);
+    padding: 6px 14px;
+    background: var(--color-tooltip-bg);
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(14, 88, 143, 0.2);
+}
+
+@media (max-width: 768px) {
+    .rangeSlider-tooltip {
+        font-size: 16px;
+        line-height: 20px;
+        padding: 4px 12px;
+        border-radius: 7px;
+    }
+}
+
+@media (max-width: 576px) {
+    .rangeSlider-tooltip {
+        font-size: 14px;
+        line-height: 18px;
+        padding: 2px 10px;
+        border-radius: 4px;
+    }
+}
+
+.rangeSlider-tooltip-min {
+    transform: translateX(-50%);
+    top: -95px;
+    left: 25%;
+}
+
+@media (max-width: 768px) {
+    .rangeSlider-tooltip-min {
+        top: -80px;
+    }
+}
+
+@media (max-width: 576px) {
+    .rangeSlider-tooltip-min {
+        top: -70px;
+    }
+}
+
+.rangeSlider-tooltip-min::after,
+.rangeSlider-tooltip-max::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 10px solid transparent;
+}
+
+.rangeSlider-tooltip-min::after {
+    top: 100%;
+    border-top: 10px solid var(--color-tooltip-bg);
+}
+
+.rangeSlider-tooltip-max::after {
+    bottom: 100%;
+    border-bottom: 10px solid var(--color-tooltip-bg);
+}
+
+.rangeSlider-tooltip-max {
+    transform: translateX(50%);
+    top: 25px;
+    right: 25%;
+}
+
+@media (max-width: 768px) {
+    .rangeSlider-tooltip-max {
+        top: 20px;
+    }
+}
