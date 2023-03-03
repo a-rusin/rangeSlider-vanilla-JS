@@ -12,7 +12,7 @@ class RangeSlider {
                 (1 / 12) * options.maxSelectedDate.split("-")[0],
         };
 
-        this.switchMode = "month";
+        this.switchMode = "years";
 
         this.minDateForMonth = this.options.minSelectedDate;
         this.maxDateForMonth = this.options.maxSelectedDate;
