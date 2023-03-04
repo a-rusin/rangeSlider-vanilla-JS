@@ -43,7 +43,9 @@ class RangeSlider {
 
         if (mode === "years") {
             for (let i = 0; i <= this.options.maxDate - this.options.minDate; i++) {
-                htmlRuler += `<li class="rangeSlider-years-item">${this.options.minDate + i}</li>`;
+                htmlRuler += `<li class="rangeSlider-years-item" style="left: ${
+                    i * (100 / (this.options.maxDate - this.options.minDate))
+                }%">${this.options.minDate + i}</li>`;
             }
         } else if (mode === "month") {
             for (
@@ -51,14 +53,18 @@ class RangeSlider {
                 i <= Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth);
                 i++
             ) {
+                let step = Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth);
+                let positionLeft = i * (100 / step);
                 let htmlSubRuler = "";
-                this.#month.forEach((month) => {
-                    htmlSubRuler += `<li class="rangeSlider-years-item">${month}</li>`;
+                this.#month.forEach((month, j) => {
+                    htmlSubRuler += `<li class="rangeSlider-years-item" style="left: ${
+                        positionLeft + (j + 1) * (((i + 1) * (100 / step) - positionLeft) / 12)
+                    }%">${month}</li>`;
                 });
                 htmlRuler += `
-                    <li class="rangeSlider-years-item rangeSlider-years-item-black">${
-                        parseInt(this.minDateForMonth) + i
-                    }</li>
+                    <li class="rangeSlider-years-item rangeSlider-years-item-black" style="left: ${positionLeft}%">${
+                    parseInt(this.minDateForMonth) + i
+                }</li>
                     ${
                         i + parseInt(this.minDateForMonth) === Math.ceil(this.maxDateForMonth)
                             ? ""
@@ -120,10 +126,14 @@ class RangeSlider {
                             value="${this.maxDateForMonth}"
                             step="0.0833333333333333"
                         >
-                        <ul class="rangeSlider-years-list">
-                            ${htmlRuler}
-                        </ul>
+
+                        <div class="selector">
+                        </div>
+                        
                     </div>
+                    <ul class="rangeSlider-years-list">
+                            ${htmlRuler}
+                    </ul>
                 </div>
             </div>
         `;
@@ -174,6 +184,10 @@ class RangeSlider {
         let left;
         let right;
 
+        let step;
+        let compensetionLeft;
+        let compensetionRight;
+
         if (this.switchMode === "years") {
             left =
                 100 -
@@ -182,6 +196,10 @@ class RangeSlider {
             right =
                 (100 * (this.options.maxDate - max)) /
                 (this.options.maxDate - this.options.minDate);
+
+            step = 20 / (this.options.maxDate - this.options.minDate);
+            compensetionLeft = 40 + step * (min - this.options.minDate);
+            compensetionRight = 40 + step * (this.options.maxDate - max);
         } else if (this.switchMode === "month") {
             left =
                 100 -
@@ -190,17 +208,25 @@ class RangeSlider {
             right =
                 (100 * (Math.ceil(this.maxDateForMonth) - max)) /
                 (Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth));
+
+            step = 20 / (Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth));
+            compensetionLeft = 40 + step * (min - parseInt(this.minDateForMonth));
+            compensetionRight = 40 + step * (Math.ceil(this.maxDateForMonth) - max);
         }
+
+        // let someTestValueLeft = 0;
 
         this.progressElem.style.left = left + "%";
         this.progressElem.style.right = right + "%";
 
         this.tooltips[0].style.left = left + "%";
+        this.tooltips[0].style.transform = `translateX(-${compensetionLeft}%)`;
         this.tooltips[0].innerHTML = `${
             this.#monthsFormatValues[+(min % 1).toFixed(2)]
         } <br /> ${parseInt(min)} `;
 
         this.tooltips[1].style.right = right + "%";
+        this.tooltips[1].style.transform = `translateX(${compensetionRight}%)`;
         this.tooltips[1].innerHTML = `${
             this.#monthsFormatValues[+(max % 1).toFixed(2)]
         } <br /> ${parseInt(max)} `;
