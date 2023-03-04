@@ -6,8 +6,6 @@ Hello!\
 This is my test task for NST company: customizable range slider component (widget) for JavaScript with no external dependencies.\
 The slider works as follows. To begin with, the user selects the year range (year switcher), then during the transition to the month section (month switcher), the slider remembers the current values of the minimum and maximum slider dipozone, and accepts them for the second slider (by month) for the minimum and maximum values, respectively. In the second slider, a more precise slider setting is selected (a more accurate date range).
 
-![Example gif](https://i.ibb.co/42xBff2/example-gif.gif)
-
 ## Features
 
 -   Vanilla JavaScript!
