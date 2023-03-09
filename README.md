@@ -19,6 +19,7 @@ The slider works as follows. To begin with, the user selects the year range (yea
 ## Tested in:
 
 -   Chrome 110
+-   Mozilla Firefox 110.0.1
 
 Should also work in all major browsers, but need to test.
 

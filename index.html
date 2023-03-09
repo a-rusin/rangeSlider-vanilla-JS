@@ -1,28 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
     <head>
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="./css/reset.css" />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap"
-            rel="stylesheet"
-        />
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="./css/style.css" />
         <link rel="stylesheet" href="./range-slider/range-slider.css" />
         <title>NST - Test Task</title>
     </head>
     <body>
-        <div class="wrapper">
-            <div class="range-slider"></div>
-        </div>
+        <main>
+            <section>
+                <div class="wrapper">
+                    <div class="range-slider"></div>
+                </div>
+            </section>
+        </main>
 
         <script src="./range-slider/range-slider.js"></script>
         <script>
             new RangeSlider(".range-slider", {
                 minDate: 2010,
-                maxDate: 2021,
+                maxDate: 2020,
                 minSelectedDate: "04-2015", // Format 'month-year' month -> 0-11 only; year - infinity
                 maxSelectedDate: "08-2016",
             });

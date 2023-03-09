@@ -4,12 +4,8 @@ class RangeSlider {
 
         this.options = {
             ...options,
-            minSelectedDate:
-                +options.minSelectedDate.split("-")[1] +
-                (1 / 12) * options.minSelectedDate.split("-")[0],
-            maxSelectedDate:
-                +options.maxSelectedDate.split("-")[1] +
-                (1 / 12) * options.maxSelectedDate.split("-")[0],
+            minSelectedDate: this.#inputDataParsing(options.minSelectedDate),
+            maxSelectedDate: this.#inputDataParsing(options.maxSelectedDate),
         };
 
         this.switchMode = "years";
@@ -36,40 +32,49 @@ class RangeSlider {
         0.92: "Декабрь",
     };
 
+    #activeClassSwitcher = "active";
+
+    #stepForSlider = 1 / 12; //12 - number of months in a year; 1 - basic step for range input
+
+    #uncertaintyTranformX = 20; // calc experimentally
+    #startedCompensation = 40; // calc experimentally
+
+    #inputDataParsing(selectedDate) {
+        return +selectedDate.split("-")[1] + (1 / 12) * +selectedDate.split("-")[0];
+    }
+
+    #addEventsListeners() {
+        this.progressElem = this.selector.querySelector(".rangeSlider-progress");
+        this.rangeInputs = this.selector.querySelectorAll(".rangeSlider-inputs input");
+        this.tooltips = this.selector.querySelectorAll(".rangeSlider-tooltip");
+        this.switchers = this.selector.querySelectorAll("[data-switchers]");
+    }
+
     render(mode) {
         this.selector.innerHTML = "";
 
         let htmlRuler = "";
 
         if (mode === "years") {
-            for (let i = 0; i <= this.options.maxDate - this.options.minDate; i++) {
-                htmlRuler += `<li class="rangeSlider-years-item" style="left: ${
-                    i * (100 / (this.options.maxDate - this.options.minDate))
-                }%">${this.options.minDate + i}</li>`;
+            const currentDifMaxMinYear = this.options.maxDate - this.options.minDate;
+            let step = 100 / currentDifMaxMinYear;
+            for (let i = 0; i <= currentDifMaxMinYear; i++) {
+                htmlRuler += `<li class="rangeSlider-years-item" style="left: ${i * step}%; transform: translateX(-${i * step}%)">${this.options.minDate + i}</li>`;
             }
         } else if (mode === "month") {
-            for (
-                let i = 0;
-                i <= Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth);
-                i++
-            ) {
-                let step = Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth);
-                let positionLeft = i * (100 / step);
+            const currentDifMaxMinYear = Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth);
+            let step = 100 / currentDifMaxMinYear;
+            for (let i = 0; i <= currentDifMaxMinYear; i++) {
                 let htmlSubRuler = "";
+
                 this.#month.forEach((month, j) => {
-                    htmlSubRuler += `<li class="rangeSlider-years-item" style="left: ${
-                        positionLeft + (j + 1) * (((i + 1) * (100 / step) - positionLeft) / 12)
-                    }%">${month}</li>`;
+                    let monthPos = i * step + (j + 1) * (100 / currentDifMaxMinYear / 12);
+                    htmlSubRuler += `<li class="rangeSlider-years-item" style="left: ${monthPos}%; transform: translateX(-${monthPos}%) ">${month}</li>`;
                 });
+
                 htmlRuler += `
-                    <li class="rangeSlider-years-item rangeSlider-years-item-black" style="left: ${positionLeft}%">${
-                    parseInt(this.minDateForMonth) + i
-                }</li>
-                    ${
-                        i + parseInt(this.minDateForMonth) === Math.ceil(this.maxDateForMonth)
-                            ? ""
-                            : htmlSubRuler
-                    }
+                    <li class="rangeSlider-years-item rangeSlider-years-item-black" style="left: ${i * step}%; transform: translateX(-${i * step}%)">${parseInt(this.minDateForMonth) + i}</li>
+                    ${i + parseInt(this.minDateForMonth) === Math.ceil(this.maxDateForMonth) ? "" : htmlSubRuler}
                 `;
             }
         }
@@ -78,12 +83,8 @@ class RangeSlider {
         const htmlMain = `
             <div class="rangeSlider-container">
                 <div class="rangeSlider-switcher">
-                    <a href="#" data-switchers="years" class="rangeSldier-link ${
-                        this.switchMode === "years" ? "active" : " "
-                    }">Все года</a>
-                    <a href="#" data-switchers="month" class="rangeSldier-link ${
-                        this.switchMode === "month" ? "active" : " "
-                    }">Месяца</a>
+                    <button data-switchers="years" class="rangeSlider-btn ${this.switchMode === "years" ? this.#activeClassSwitcher : " "}">Все года</button>
+                    <button data-switchers="month" class="rangeSlider-btn ${this.switchMode === "month" ? this.#activeClassSwitcher : " "}">Месяца</button>
                 </div>
                 <div class="rangeSlider-content">
                     <div class="rangeSlider-slider">
@@ -96,35 +97,19 @@ class RangeSlider {
                             type="range"
                             name="rangeSlider-input-min"
                             class="rangeSlider-input-min"
-                            min="${
-                                this.switchMode === "years"
-                                    ? this.options.minDate
-                                    : parseInt(this.minDateForMonth)
-                            }"
-                            max="${
-                                this.switchMode === "years"
-                                    ? this.options.maxDate
-                                    : Math.ceil(this.maxDateForMonth)
-                            }"
+                            min="${this.switchMode === "years" ? this.options.minDate : parseInt(this.minDateForMonth)}"
+                            max="${this.switchMode === "years" ? this.options.maxDate : Math.ceil(this.maxDateForMonth)}"
                             value="${this.minDateForMonth}"
-                            step="0.0833333333333333"
+                            step=${this.#stepForSlider}
                         >
                         <input
                             type="range"
                             name="rangeSlider-input-max"
                             class="rangeSlider-input-max"
-                            min="${
-                                this.switchMode === "years"
-                                    ? this.options.minDate
-                                    : parseInt(this.minDateForMonth)
-                            }"
-                            max="${
-                                this.switchMode === "years"
-                                    ? this.options.maxDate
-                                    : Math.ceil(this.maxDateForMonth)
-                            }"
+                            min="${this.switchMode === "years" ? this.options.minDate : parseInt(this.minDateForMonth)}"
+                            max="${this.switchMode === "years" ? this.options.maxDate : Math.ceil(this.maxDateForMonth)}"
                             value="${this.maxDateForMonth}"
-                            step="0.0833333333333333"
+                            step=${this.#stepForSlider}
                         >
 
                         <div class="selector">
@@ -142,26 +127,18 @@ class RangeSlider {
     }
 
     init() {
-        this.progressElem = this.selector.querySelector(".rangeSlider-progress");
-        this.rangeInputs = this.selector.querySelectorAll(".rangeSlider-inputs input");
-        this.tooltips = this.selector.querySelectorAll(".rangeSlider-tooltip");
-        this.switchers = this.selector.querySelectorAll("[data-switchers]");
+        this.#addEventsListeners();
 
         this.changeProgress(this.minDateForMonth, this.maxDateForMonth); // on start
 
         this.rangeInputs.forEach((input) => {
             //change inputs
             input.addEventListener("input", (e) => {
-                if (
-                    +this.rangeInputs[1].value - +this.rangeInputs[0].value <= 1 &&
-                    this.switchMode === "years"
-                ) {
+                const currentDifMaxMinYear = +this.rangeInputs[1].value - +this.rangeInputs[0].value;
+                if (currentDifMaxMinYear <= 1 && this.switchMode === "years") {
                     this.rangeInputs[0].value = +this.rangeInputs[1].value - 1; // gap - 1 year
-                } else if (
-                    +this.rangeInputs[1].value - +this.rangeInputs[0].value <= 0.0833333333333333 &&
-                    this.switchMode === "month"
-                ) {
-                    this.rangeInputs[0].value = +this.rangeInputs[1].value - 0.0833333333333333; // gap - 1 month
+                } else if (currentDifMaxMinYear <= this.#stepForSlider && this.switchMode === "month") {
+                    this.rangeInputs[0].value = +this.rangeInputs[1].value - this.#stepForSlider; // gap - 1 month
                 }
                 this.changeProgress(); // on change
             });
@@ -170,8 +147,8 @@ class RangeSlider {
         this.switchers.forEach((btn) => {
             btn.addEventListener("click", (e) => {
                 e.preventDefault();
-                this.switchers.forEach((btn) => btn.classList.remove("active")); //delete active class
-                e.target.classList.add("active"); //add active class
+                this.switchers.forEach((btn) => btn.classList.remove(this.#activeClassSwitcher)); //delete active class
+                e.target.classList.add(this.#activeClassSwitcher); //add active class
                 this.switchMode = e.target.getAttribute("data-switchers"); //changemode
                 this.minDateForMonth = +this.rangeInputs[0].value;
                 this.maxDateForMonth = +this.rangeInputs[1].value;
@@ -189,29 +166,21 @@ class RangeSlider {
         let compensetionRight;
 
         if (this.switchMode === "years") {
-            left =
-                100 -
-                (100 * (this.options.maxDate - min)) /
-                    (this.options.maxDate - this.options.minDate);
-            right =
-                (100 * (this.options.maxDate - max)) /
-                (this.options.maxDate - this.options.minDate);
+            const currentDifMaxMinYear = this.options.maxDate - this.options.minDate;
+            left = 100 - (100 * (this.options.maxDate - min)) / currentDifMaxMinYear;
+            right = (100 * (this.options.maxDate - max)) / currentDifMaxMinYear;
 
-            step = 20 / (this.options.maxDate - this.options.minDate);
-            compensetionLeft = 40 + step * (min - this.options.minDate);
-            compensetionRight = 40 + step * (this.options.maxDate - max);
+            step = this.#uncertaintyTranformX / currentDifMaxMinYear;
+            compensetionLeft = this.#startedCompensation + step * (min - this.options.minDate);
+            compensetionRight = this.#startedCompensation + step * (this.options.maxDate - max);
         } else if (this.switchMode === "month") {
-            left =
-                100 -
-                (100 * (Math.ceil(this.maxDateForMonth) - min)) /
-                    (Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth));
-            right =
-                (100 * (Math.ceil(this.maxDateForMonth) - max)) /
-                (Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth));
+            const currentDifMaxMinYear = Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth);
+            left = 100 - (100 * (Math.ceil(this.maxDateForMonth) - min)) / currentDifMaxMinYear;
+            right = (100 * (Math.ceil(this.maxDateForMonth) - max)) / currentDifMaxMinYear;
 
-            step = 20 / (Math.ceil(this.maxDateForMonth) - parseInt(this.minDateForMonth));
-            compensetionLeft = 40 + step * (min - parseInt(this.minDateForMonth));
-            compensetionRight = 40 + step * (Math.ceil(this.maxDateForMonth) - max);
+            step = this.#uncertaintyTranformX / currentDifMaxMinYear;
+            compensetionLeft = this.#startedCompensation + step * (min - parseInt(this.minDateForMonth));
+            compensetionRight = this.#startedCompensation + step * (Math.ceil(this.maxDateForMonth) - max);
         }
 
         // let someTestValueLeft = 0;
@@ -221,14 +190,10 @@ class RangeSlider {
 
         this.tooltips[0].style.left = left + "%";
         this.tooltips[0].style.transform = `translateX(-${compensetionLeft}%)`;
-        this.tooltips[0].innerHTML = `${
-            this.#monthsFormatValues[+(min % 1).toFixed(2)]
-        } <br /> ${parseInt(min)} `;
+        this.tooltips[0].innerHTML = `${this.#monthsFormatValues[+(min % 1).toFixed(2)]} <br /> ${parseInt(min)} `;
 
         this.tooltips[1].style.right = right + "%";
         this.tooltips[1].style.transform = `translateX(${compensetionRight}%)`;
-        this.tooltips[1].innerHTML = `${
-            this.#monthsFormatValues[+(max % 1).toFixed(2)]
-        } <br /> ${parseInt(max)} `;
+        this.tooltips[1].innerHTML = `${this.#monthsFormatValues[+(max % 1).toFixed(2)]} <br /> ${parseInt(max)} `;
     }
 }
