@@ -130,6 +130,11 @@
     top: 20px;
 }
 
+.rangeSlider-years-item.rotate {
+    top: 30px;
+    transform: translateX(-50%) rotate(-45deg) !important;
+}
+
 @media (max-width: 1024px) {
     .rangeSlider-years-item {
         top: 30px;
